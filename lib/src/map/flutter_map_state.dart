@@ -10,6 +10,7 @@ import 'package:flutter_map/src/map/map_state_widget.dart';
 import 'package:positioned_tap_detector_2/positioned_tap_detector_2.dart';
 
 class FlutterMapState extends MapGestureMixin {
+  late MapController _mapController;
   final List<StreamGroup<void>> groups = <StreamGroup<void>>[];
   final _positionedTapController = PositionedTapController();
 
@@ -20,7 +21,7 @@ class FlutterMapState extends MapGestureMixin {
   late final MapState mapState;
 
   @override
-  MapController get mapController => widget.mapController;
+  MapController get mapController => _mapController;
 
   @override
   void didUpdateWidget(FlutterMap oldWidget) {
@@ -32,6 +33,7 @@ class FlutterMapState extends MapGestureMixin {
   @override
   void initState() {
     super.initState();
+    _mapController = widget.mapController ?? MapController()
     mapState = MapState(options, (degree) {
       if (mounted) setState(() => {});
     }, mapController.mapEventSink);
@@ -55,8 +57,7 @@ class FlutterMapState extends MapGestureMixin {
   void dispose() {
     _disposeStreamGroups();
     mapState.dispose();
-    mapController.dispose();
-
+    if( widget.mapController == null ) mapController.dispose();
     super.dispose();
   }
 
